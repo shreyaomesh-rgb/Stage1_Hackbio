@@ -25,6 +25,46 @@ Data type: Illumina paired-end reads (FASTQ format).
   
   Tools used: FastQC and Fastp
   Purpose: Assessed base quality, trimmed adapters, corrected sequencing errors.
+
+
+    #!/bin/bash
+    # ======================================================
+    # Quality Control with FastQC
+    # ======================================================
+    
+    RAW_DIR="raw_reads"
+    OUT_DIR="fastqc_report"
+    
+    echo "=== FASTQC STEP STARTED ==="
+    
+    if [ ! -d "$RAW_DIR" ]; then
+      echo "ERROR: Input folder '$RAW_DIR' not found!"
+      exit 1
+    fi
+    
+    mkdir -p "$OUT_DIR"
+    echo "Output directory set to: $OUT_DIR"
+    
+    FASTQ_FILES=($RAW_DIR/*.fastq.gz)
+    
+    if [ ${#FASTQ_FILES[@]} -eq 0 ]; then
+      echo "ERROR: No FASTQ files found in '$RAW_DIR'"
+      exit 1
+    fi
+    
+    echo "Running FastQC on ${#FASTQ_FILES[@]} files..."
+    fastqc -t 8 "${FASTQ_FILES[@]}" -o "$OUT_DIR"
+    
+    if [ $? -eq 0 ]; then
+      echo "✓ FastQC completed successfully."
+      echo "Reports saved in: $OUT_DIR"
+    else
+      echo "✗ FastQC encountered an error. Check logs."
+      exit 1
+    fi
+    
+    echo "=== FASTQC STEP COMPLETED ==="
+
   
     #!/bin/bash
     # ======================================================
@@ -282,5 +322,6 @@ Data type: Illumina paired-end reads (FASTQ format).
    ⦁	Surveillance and Monitoring: Effective food safety surveillance is crucial for detecting and responding to outbreaks quickly.
    ⦁	Consumer Awareness: Educating consumers on food safety, particularly regarding ready-to-eat products like polony, is vital for reducing risks.
    ⦁	Need for Stronger Enforcement: The outbreak highlighted the need for stronger enforcement of food safety laws and increased capacity of food safety inspectors in South Africa.
+
 
 
